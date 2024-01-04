@@ -1,1 +1,11 @@
 /* You can add global styles to this file, and also import other style files */
+@import 'reset-css';
+
+body {
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  padding: 1rem;
+}
+
+textarea {
+  font-family: Calibri, Helvetica, Arial, sans-serif;
+}
