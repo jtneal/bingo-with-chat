@@ -15,6 +15,9 @@ import { AlignmentHandler } from './alignment.handler';
  * Light Mode / Dark Mode toggle
  */
 
+const mock =
+  'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque commodo ac tortor quis ullamcorper. Sed ultricies purus a sapien lacinia, vitae imperdiet turpis malesuada.';
+
 @Component({
   selector: 'bingo-with-chat-bingo',
   standalone: true,
@@ -32,13 +35,7 @@ export class BingoComponent implements AfterViewInit, OnDestroy {
   private readonly destroy$ = new Subject<void>();
 
   public card = [
-    [
-      '',
-      '',
-      '',
-      '',
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque commodo ac tortor quis ullamcorper. Sed ultricies purus a sapien lacinia, vitae imperdiet turpis malesuada.',
-    ],
+    ['', '', '', '', mock],
     ['', '', '', '', ''],
     ['', '', 'Free!', '', ''],
     ['', '', '', '', ''],
