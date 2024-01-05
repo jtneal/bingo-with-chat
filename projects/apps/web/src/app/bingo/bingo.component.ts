@@ -13,6 +13,9 @@ import { AlignmentHandler } from './alignment.handler';
 
 /**
  * Light Mode / Dark Mode toggle
+ * Button to save
+ * Auto bingo key hex
+ * Anyone that loads bingo key gets random card but refreshing keeps the card and all in progress stuff.
  */
 
 const mock =
@@ -43,6 +46,7 @@ export class BingoComponent implements AfterViewInit, OnDestroy {
   ];
 
   public ngAfterViewInit(): void {
+    // Setup keyup event listener to align cells
     fromEvent(this.cardElement.nativeElement, 'keyup')
       .pipe(debounceTime(100), takeUntil(this.destroy$))
       .subscribe((event) =>
@@ -51,6 +55,7 @@ export class BingoComponent implements AfterViewInit, OnDestroy {
         )
       );
 
+    // If there is existing data, we need to align all cells on init
     this.textareaElements.forEach((textarea) => {
       AlignmentHandler.align(textarea.nativeElement);
     });
