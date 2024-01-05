@@ -1,7 +1,7 @@
 <div #cardElement class="card">
   <div *ngFor="let row of card" class="row">
     <div *ngFor="let col of row" class="col">
-      <textarea class="textarea">{{ col }}</textarea>
+      <textarea #textareaElement class="textarea">{{ col }}</textarea>
     </div>
   </div>
 </div>
