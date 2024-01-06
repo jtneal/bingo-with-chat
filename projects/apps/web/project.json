@@ -21,7 +21,7 @@
           "projects/apps/web/src/assets"
         ],
         "styles": ["projects/apps/web/src/styles.scss"],
-        "scripts": []
+        "scripts": ["node_modules/"]
       },
       "configurations": {
         "production": {

@@ -1,11 +1,26 @@
-/* You can add global styles to this file, and also import other style files */
 @import 'reset-css';
+
+html {
+  box-sizing: border-box;
+}
+
+*, *:before, *:after {
+  box-sizing: inherit;
+}
 
 body {
   font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-  padding: 1rem;
 }
 
 textarea {
-  font-family: Calibri, Helvetica, Arial, sans-serif;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 }
+
+// Setup theme variables
+$black: #000;
+$white: rgba(231, 233, 234, 1);
+$blue: #00a4d0;
+
+// Load Themes
+@import './assets/themes/dark';
+@import './assets/themes/light';

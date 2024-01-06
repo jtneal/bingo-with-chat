@@ -1,0 +1,29 @@
+.dark-theme {
+  background-color: $black;
+  color: $white;
+
+  .bingo-blocks {
+    fill: $white;
+  }
+
+  .bingo-with-chat {
+    fill: $blue;
+  }
+
+  .card {
+    border-color: $white;
+  }
+
+  .col {
+    border-color: $white;
+  }
+
+  .textarea {
+    background-color: $black;
+    color: $white;
+
+    &:focus{
+      box-shadow: 0 0 0 6px rgba(167, 80, 15, 0.5);
+    }
+  }
+}

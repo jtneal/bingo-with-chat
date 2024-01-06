@@ -2,6 +2,7 @@ import {
   AfterViewInit,
   Component,
   ElementRef,
+  Input,
   OnDestroy,
   ViewChild,
   ViewChildren,
@@ -40,7 +41,7 @@ export class BingoComponent implements AfterViewInit, OnDestroy {
   public card = [
     ['', '', '', '', mock],
     ['', '', '', '', ''],
-    ['', '', 'Free!', '', ''],
+    ['', '', 'FREE!', '', ''],
     ['', '', '', '', ''],
     ['', '', '', '', ''],
   ];

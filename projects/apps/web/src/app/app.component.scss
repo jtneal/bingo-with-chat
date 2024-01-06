@@ -1,4 +1,46 @@
+.wrapper {
+  padding: 1rem;
+  min-height: 100vh;
+  transition: 0.5s;
+}
+
 header {
   margin-bottom: 1rem;
   text-align: center;
+}
+
+.dark-mode-toggler {
+  background-color: #1a1a1a;
+  border-radius: 5px;
+  cursor: pointer;
+  height: 40px;
+  position: fixed;
+  right: 1rem;
+  top: 1rem;
+  width: 80px;
+}
+
+.toggle {
+  align-items: center;
+  background-color: #313131;
+  border-radius: 8px;
+  display: flex;
+  height: 40px;
+  justify-content: center;
+  transition: 0.5s;
+  width: 40px;
+
+  svg {
+    color: rgba(255, 255, 255, 0.25);
+    transition: 0.5s;
+  }
+}
+
+.toggle-on {
+  margin-left: 40px;
+
+  svg {
+    color: rgba(255, 255, 255, 1);
+    filter: drop-shadow(0 0 3px #fff) drop-shadow(0 0 6px #fff);
+  }
 }

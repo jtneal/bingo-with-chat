@@ -1,8 +1,9 @@
 .card {
-  border: 1px solid #000;
+  border: 1px solid;
   margin: 0 auto;
-  width: 100%;
   max-width: 600px;
+  transition: 0.25s;
+  width: 100%;
 }
 
 .row {
@@ -10,16 +11,16 @@
 }
 
 .col {
-  border: 1px solid #000;
+  border: 1px solid;
   height: 0;
   padding-bottom: 20%;
   position: relative;
+  transition: 0.25s;
   width: 20%;
 }
 
 .textarea {
   border: none;
-  box-sizing: border-box;
   font-size: 32px;
   height: 100%;
   outline: none;
@@ -28,10 +29,10 @@
   position: absolute;
   resize: none;
   text-align: center;
+  transition: 0.25s;
   width: 100%;
 
   &:focus {
-    box-shadow: 0 0 0 6px rgba(167, 80, 15, 0.5);
     z-index: 1;
   }
 }
