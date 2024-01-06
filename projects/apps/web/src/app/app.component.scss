@@ -44,3 +44,12 @@ header {
     filter: drop-shadow(0 0 3px #fff) drop-shadow(0 0 6px #fff);
   }
 }
+
+footer {
+  display: flex;
+  justify-content: space-between;
+  margin: 0 auto;
+  max-width: 600px;
+  padding-top: 1rem;
+  width: 100%;
+}

@@ -10,5 +10,11 @@ import { RouterModule } from '@angular/router';
   encapsulation: ViewEncapsulation.None,
 })
 export class AppComponent {
-  public darkTheme = true;
+  public darkTheme = localStorage.getItem('bingo-theme') !== 'light';
+  public year = new Date().getFullYear();
+
+  public switchTheme(): void {
+    this.darkTheme = !this.darkTheme;
+    localStorage.setItem('bingo-theme', this.darkTheme ? 'dark' : 'light');
+  }
 }

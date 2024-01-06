@@ -2,7 +2,6 @@ import {
   AfterViewInit,
   Component,
   ElementRef,
-  Input,
   OnDestroy,
   ViewChild,
   ViewChildren,
@@ -13,10 +12,10 @@ import { Subject, debounceTime, fromEvent, takeUntil } from 'rxjs';
 import { AlignmentHandler } from './alignment.handler';
 
 /**
- * Light Mode / Dark Mode toggle
  * Button to save
  * Auto bingo key hex
  * Anyone that loads bingo key gets random card but refreshing keeps the card and all in progress stuff.
+ * credit at bottom to HochiDev
  */
 
 const mock =
