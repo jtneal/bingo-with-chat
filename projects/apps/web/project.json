@@ -20,8 +20,8 @@
           "projects/apps/web/src/favicon.ico",
           "projects/apps/web/src/assets"
         ],
-        "styles": ["projects/apps/web/src/styles.scss"],
-        "scripts": ["node_modules/"]
+        "styles": ["projects/apps/web/src/assets/styles/styles.scss"],
+        "scripts": []
       },
       "configurations": {
         "production": {

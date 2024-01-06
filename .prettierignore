@@ -3,3 +3,6 @@
 /coverage
 /.nx/cache
 .angular
+
+# Don't want to auto format svgs
+/projects/apps/web/src/app/app.component.html
