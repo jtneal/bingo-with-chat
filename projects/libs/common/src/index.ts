@@ -1,1 +1,2 @@
-export * from './lib/common';
+export * from './lib/card.dto';
+export * from './lib/game.dto';

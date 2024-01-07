@@ -1,7 +1,39 @@
-<div #cardElement class="card">
-  <div *ngFor="let row of card" class="row">
-    <div *ngFor="let col of row" class="col">
-      <textarea #textareaElement class="textarea">{{ col }}</textarea>
+<ng-container *ngIf="game$ | async; let game">
+  <div #cardElement class="card">
+    <div *ngFor="let row of game.card" class="row">
+      <div *ngFor="let col of row" class="col">
+        <textarea #textareaElement class="textarea">{{ col }}</textarea>
+      </div>
     </div>
   </div>
-</div>
+  <div class="action">
+    <div class="action-left">
+      <button
+        class="btn-secondary"
+        (click)="game.card.push(['', '', '', '', ''])"
+        [disabled]="game.card.length >= 15"
+        type="button"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="20"
+          height="20"
+          viewBox="0 0 512 512"
+        >
+          <path
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="50"
+            d="M256 112v288m144-144H112"
+          />
+        </svg>
+        Add more
+      </button>
+    </div>
+    <div class="action-right">
+      <button (click)="onSubmit(game.card)" type="submit">Save</button>
+    </div>
+  </div>
+</ng-container>

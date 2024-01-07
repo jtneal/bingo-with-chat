@@ -1,5 +1,4 @@
 import {
-  AfterViewInit,
   Component,
   ElementRef,
   OnDestroy,
@@ -7,9 +6,19 @@ import {
   ViewChildren,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Subject, debounceTime, fromEvent, takeUntil } from 'rxjs';
+import { CardDto } from '@bingo-with-chat/common';
+import {
+  Subject,
+  debounceTime,
+  finalize,
+  firstValueFrom,
+  fromEvent,
+  takeUntil,
+} from 'rxjs';
 
 import { AlignmentHandler } from './alignment.handler';
+import { BingoService } from './bingo.service';
+import { Router } from '@angular/router';
 
 /**
  * Button to save
@@ -18,10 +27,13 @@ import { AlignmentHandler } from './alignment.handler';
  * Have to be logged in to play, no way around it and limits people to 1 card and no cheating
  * Login with twitch, kick, youtube, etc.
  * Regular players instead of textarea get a text only box or uneditable textarea when clicked creates an X w/ $blueFade
+ * Terminology Vocabulary: Card, Row, Column, Space
+ * Normal bingo is 15 options per column. 5 in the normal card, up to 10 extra lines
+ * Make free space required
+ * Add google analytics or something so i know where visitors might be coming from
+ * Update uses same stuff but says Update
+ * Need to setup getGame call to be dynamic based on param, but if new use blank
  */
-
-const mock =
-  'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque commodo ac tortor quis ullamcorper. Sed ultricies purus a sapien lacinia, vitae imperdiet turpis malesuada.';
 
 @Component({
   selector: 'bingo-with-chat-bingo',
@@ -30,7 +42,7 @@ const mock =
   templateUrl: './bingo.component.html',
   styleUrl: './bingo.component.scss',
 })
-export class BingoComponent implements AfterViewInit, OnDestroy {
+export class BingoComponent implements OnDestroy {
   @ViewChild('cardElement')
   private readonly cardElement!: ElementRef;
 
@@ -39,46 +51,35 @@ export class BingoComponent implements AfterViewInit, OnDestroy {
 
   private readonly destroy$ = new Subject<void>();
 
-  public card = [
-    [
-      'F Bomb Dropped',
-      'Show starts late',
-      'BG3 wins an award',
-      'Destiny wins an award',
-      mock,
-    ],
-    [
-      'Show ends late',
-      'Technical difficulties',
-      "Crowd boo's",
-      'Wrap up music plays during thank you speech',
-      'Someone trips and falls down',
-    ],
-    [
-      'Unexpected celeb comes on stage',
-      'Someone sneezes on stage',
-      'FREE!',
-      mock,
-      'Half Life 3 announced',
-    ],
-    [
-      'Destiny 3 announced',
-      'Super Cringe',
-      'Someone talks with gum in their mouth',
-      'Someone wearing pajamas',
-      'Pedro Eustache is shown jamming out on an instrument',
-    ],
-    [
-      'Thank you speech is cut off after being far too long',
-      mock,
-      'Aliens or UFOs are mentioned',
-      'War/genocide is mentioned',
-      'Layoffs are mentioned',
-    ],
-  ];
+  public game$ = this.service
+    .getGame('id')
+    .pipe(finalize(() => setTimeout(() => this.setup())));
 
-  public ngAfterViewInit(): void {
-    // Setup keyup event listener to align cells
+  public constructor(
+    private readonly router: Router,
+    private readonly service: BingoService
+  ) {}
+
+  public ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  public async onSubmit(card: CardDto): Promise<void> {
+    const apiCard = await firstValueFrom(this.service.createGame(card));
+
+    if (apiCard.success) {
+      this.router.navigate([`games/${apiCard.id}`]);
+    } else {
+      console.log('Error:', apiCard.error);
+    }
+  }
+
+  private setup(): void {
+    this.textareaElements.forEach((textarea) => {
+      AlignmentHandler.align(textarea.nativeElement);
+    });
+
     fromEvent(this.cardElement.nativeElement, 'keyup')
       .pipe(debounceTime(100), takeUntil(this.destroy$))
       .subscribe((event) =>
@@ -86,15 +87,5 @@ export class BingoComponent implements AfterViewInit, OnDestroy {
           (event as KeyboardEvent).target as HTMLTextAreaElement
         )
       );
-
-    // If there is existing data, we need to align all cells on init
-    this.textareaElements.forEach((textarea) => {
-      AlignmentHandler.align(textarea.nativeElement);
-    });
-  }
-
-  public ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
   }
 }
