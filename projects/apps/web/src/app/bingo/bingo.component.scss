@@ -1,7 +1,12 @@
 @import '../../assets/styles/vars';
 
+bwc-alert {
+  margin-bottom: 1rem;
+}
+
 .card {
   border: 1px solid;
+  margin-top: 1rem;
   transition: 0.25s;
 }
 
@@ -36,58 +41,8 @@
   }
 }
 
-.action {
+.actions {
   display: flex;
   margin-top: 1rem;
   justify-content: space-between;
-
-  button {
-    border: none;
-    border-radius: 6px;
-    font-weight: bold;
-    text-shadow: 1px 1px 3px $black;
-    padding: 8px;
-    cursor: pointer;
-
-    &:active {
-      text-shadow: -1px -1px 3px $black;
-    }
-
-    &:disabled {
-      background-color: $gray;
-      cursor: not-allowed;
-      text-shadow: 1px 1px 3px $black;
-    }
-
-    &.btn-secondary {
-      border: 2px solid;
-      text-shadow: none;
-    }
-  }
-}
-
-.action-left {
-  button {
-    padding-left: 28px;
-    position: relative;
-
-    svg {
-      filter: drop-shadow(1px 1px 2px $black);
-      left: 5px;
-      position: absolute;
-      top: 5px;
-    }
-
-    &:active svg {
-      filter: drop-shadow(-1px -1px 2px $black);
-    }
-
-    &:disabled svg {
-      filter: drop-shadow(1px 1px 2px $black);
-    }
-
-    &.btn-secondary svg {
-      filter: none;
-    }
-  }
 }

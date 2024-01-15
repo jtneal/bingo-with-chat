@@ -6,7 +6,8 @@ import { Subject, debounceTime, finalize, firstValueFrom, fromEvent, takeUntil }
 import { AlignmentHandler } from './alignment.handler';
 import { BingoService } from './bingo.service';
 import { Router } from '@angular/router';
-import { ButtonComponent } from '@bwc/components';
+import { AlertComponent, ButtonComponent } from '@bwc/components';
+import { AppService } from '../app.service';
 
 /**
  * Button to save
@@ -26,7 +27,7 @@ import { ButtonComponent } from '@bwc/components';
 @Component({
   selector: 'bingo-with-chat-bingo',
   standalone: true,
-  imports: [ButtonComponent, CommonModule],
+  imports: [AlertComponent, ButtonComponent, CommonModule],
   templateUrl: './bingo.component.html',
   styleUrl: './bingo.component.scss',
 })
@@ -35,9 +36,17 @@ export class BingoComponent implements OnDestroy {
   @ViewChildren('textareaElement') private readonly textareaElements!: ElementRef[];
 
   public game$ = this.service.getGame('id').pipe(finalize(() => setTimeout(() => this.setup())));
+  public showError = false;
+  public showSuccess = false;
+  public theme$ = this.app.themeChangedEvent$;
+  public saveInProgress = false;
   private readonly destroy$ = new Subject<void>();
 
-  public constructor(private readonly router: Router, private readonly service: BingoService) {}
+  public constructor(
+    private readonly app: AppService,
+    private readonly router: Router,
+    private readonly service: BingoService
+  ) {}
 
   public ngOnDestroy(): void {
     this.destroy$.next();
@@ -45,12 +54,24 @@ export class BingoComponent implements OnDestroy {
   }
 
   public async onSubmit(card: CardDto): Promise<void> {
-    const apiCard = await firstValueFrom(this.service.createGame(card));
+    this.saveInProgress = true;
+    this.showError = false;
+    this.showSuccess = false;
 
-    if (apiCard.success) {
-      this.router.navigate([`games/${apiCard.id}`]);
-    } else {
-      console.log('Error:', apiCard.error);
+    try {
+      const apiCard = await firstValueFrom(this.service.createGame(card));
+
+      if (!apiCard.success) {
+        throw new Error(apiCard.error);
+      }
+
+      this.router.navigate(['games', apiCard.id]);
+      this.saveInProgress = false;
+      this.showSuccess = true;
+    } catch (error) {
+      console.error(error);
+      this.saveInProgress = false;
+      this.showError = true;
     }
   }
 

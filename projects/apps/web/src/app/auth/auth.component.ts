@@ -18,13 +18,13 @@ import { AuthState } from './auth.state';
 export class AuthComponent implements OnInit {
   public authUrl = '';
   public showError = this.document.location.href.includes('error=') || this.state.showError;
-  public theme$ = this.service.themeChangedEvent$;
+  public theme$ = this.app.themeChangedEvent$;
 
   public constructor(
+    private readonly app: AppService,
     @Inject(DOCUMENT) private readonly document: Document,
     private readonly handler: AuthHandler,
     private readonly router: Router,
-    private readonly service: AppService,
     public readonly state: AuthState,
     private readonly window: Window
   ) {}

@@ -39,6 +39,12 @@ import { Component, Input } from '@angular/core';
         padding-left: 1.95rem;
       }
 
+      &.bwc-button-icon-loading {
+        padding-left: 0.75rem;
+        color: transparent;
+        text-shadow: none;
+      }
+
       &.bwc-button-secondary {
         background-color: transparent;
         color: #00a4d0;
@@ -56,6 +62,7 @@ import { Component, Input } from '@angular/core';
 
         &:active {
           background-color: #0083a6;
+          color: #fff;
           text-shadow: -1px -1px 3px #000;
         }
       }
@@ -75,19 +82,65 @@ import { Component, Input } from '@angular/core';
       &:active svg {
         filter: drop-shadow(-1px -1px 2px #000);
       }
+
+      &.bwc-button-icon-loading svg {
+        stroke: #fff;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+
+      .spinner_V8m1 {
+        animation: spinner_zKoa 2s linear infinite;
+        transform-origin: center;
+      }
+
+      .spinner_V8m1 circle {
+        animation: spinner_YpZS 1.5s ease-in-out infinite;
+        stroke-linecap: round;
+      }
+
+      @keyframes spinner_zKoa {
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      @keyframes spinner_YpZS {
+        0% {
+          stroke-dasharray: 0 150;
+          stroke-dashoffset: 0;
+        }
+
+        47.5% {
+          stroke-dasharray: 42 150;
+          stroke-dashoffset: -16;
+        }
+
+        95%,
+        100% {
+          stroke-dasharray: 42 150;
+          stroke-dashoffset: -59;
+        }
+      }
     }
   `,
   template: `
     <button
       class="bwc-button"
-      [class.bwc-button-secondary]="type === 'secondary'"
-      [class.bwc-button-icon]="icon === 'plus'"
+      [class.bwc-button-secondary]="theme === 'secondary'"
+      [class.bwc-button-icon]="icon !== undefined"
+      [class.bwc-button-icon-loading]="icon === 'loading'"
       [disabled]="disabled"
-      type="button"
+      [type]="type"
     >
       <!-- prettier-ignore -->
       <svg *ngIf="icon === 'plus'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
         <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="50" d="M256 112v288m144-144H112" />
+      </svg>
+
+      <!-- prettier-ignore -->
+      <svg *ngIf="icon === 'loading'" class="icon-loading" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <g class="spinner_V8m1"><circle cx="12" cy="12" r="9.5" fill="none" stroke-width="3"></circle></g>
       </svg>
       <ng-content></ng-content>
     </button>
@@ -95,6 +148,7 @@ import { Component, Input } from '@angular/core';
 })
 export class ButtonComponent {
   @Input() public disabled = false;
-  @Input() public icon: undefined | 'plus';
-  @Input() public type: 'primary' | 'secondary' = 'primary';
+  @Input() public icon: undefined | 'plus' | 'loading';
+  @Input() public theme: 'primary' | 'secondary' = 'primary';
+  @Input() public type: 'button' | 'submit' = 'submit';
 }
