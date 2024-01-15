@@ -7,5 +7,5 @@ export interface GameDto {
 }
 
 export type CreateGameErrorDto = { error: string; success: false };
-export type CreateGameSuccessDto = { id: string; success: true };
+export type CreateGameSuccessDto = { id: string; owner: string; success: true };
 export type CreateGameResponseDto = CreateGameErrorDto | CreateGameSuccessDto;

@@ -1,20 +1,7 @@
-import {
-  Component,
-  ElementRef,
-  OnDestroy,
-  ViewChild,
-  ViewChildren,
-} from '@angular/core';
+import { Component, ElementRef, OnDestroy, ViewChild, ViewChildren } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { CardDto } from '@bingo-with-chat/common';
-import {
-  Subject,
-  debounceTime,
-  finalize,
-  firstValueFrom,
-  fromEvent,
-  takeUntil,
-} from 'rxjs';
+import { CardDto } from '@bwc/common';
+import { Subject, debounceTime, finalize, firstValueFrom, fromEvent, takeUntil } from 'rxjs';
 
 import { AlignmentHandler } from './alignment.handler';
 import { BingoService } from './bingo.service';
@@ -51,14 +38,9 @@ export class BingoComponent implements OnDestroy {
 
   private readonly destroy$ = new Subject<void>();
 
-  public game$ = this.service
-    .getGame('id')
-    .pipe(finalize(() => setTimeout(() => this.setup())));
+  public game$ = this.service.getGame('id').pipe(finalize(() => setTimeout(() => this.setup())));
 
-  public constructor(
-    private readonly router: Router,
-    private readonly service: BingoService
-  ) {}
+  public constructor(private readonly router: Router, private readonly service: BingoService) {}
 
   public ngOnDestroy(): void {
     this.destroy$.next();
@@ -82,10 +64,6 @@ export class BingoComponent implements OnDestroy {
 
     fromEvent(this.cardElement.nativeElement, 'keyup')
       .pipe(debounceTime(100), takeUntil(this.destroy$))
-      .subscribe((event) =>
-        AlignmentHandler.align(
-          (event as KeyboardEvent).target as HTMLTextAreaElement
-        )
-      );
+      .subscribe((event) => AlignmentHandler.align((event as KeyboardEvent).target as HTMLTextAreaElement));
   }
 }

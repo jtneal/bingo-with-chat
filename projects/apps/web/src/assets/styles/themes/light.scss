@@ -31,7 +31,7 @@
     background-color: $white;
     color: $black;
 
-    &:focus{
+    &:focus {
       box-shadow: 0 0 0 6px $blueFade;
     }
   }
@@ -53,5 +53,9 @@
         background-color: $blueLight;
       }
     }
+  }
+
+  footer {
+    background-color: $grayLight;
   }
 }

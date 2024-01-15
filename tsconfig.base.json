@@ -15,7 +15,8 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@bingo-with-chat/common": ["projects/libs/common/src/index.ts"]
+      "@bwc/common": ["projects/libs/common/src/index.ts"],
+      "@bwc/components": ["projects/libs/ui/components/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

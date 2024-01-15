@@ -1,8 +1,4 @@
-import {
-  CardDto,
-  CreateGameResponseDto,
-  GameDto,
-} from '@bingo-with-chat/common';
+import { CardDto, CreateGameResponseDto, GameDto } from '@bwc/common';
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 
 import { GameService } from './game.service';
@@ -16,8 +12,14 @@ export class GameController {
     return this.service.getGame(id);
   }
 
+  // This is only used for local setup
+  // @Post('create-table')
+  // createTable(): Promise<{ success: boolean }> {
+  //   return this.service.createTable();
+  // }
+
   @Post()
-  createGame(@Body() card: CardDto): CreateGameResponseDto {
+  createGame(@Body() card: CardDto): Promise<CreateGameResponseDto> {
     return this.service.createGame(card);
   }
 }

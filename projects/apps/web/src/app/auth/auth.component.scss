@@ -1,0 +1,29 @@
+.login-with-twitch {
+  padding: 1rem 0;
+  text-align: center;
+
+  .btn {
+    background-color: #9146ff;
+    border-radius: 6px;
+    color: #fff;
+    display: inline-block;
+    font-size: 1.3rem;
+    height: 45px;
+    line-height: 45px;
+    padding-left: 56px;
+    padding-right: 13px;
+    position: relative;
+    transition: all 0.3s ease;
+
+    &:hover {
+      background-color: #7313ff;
+      color: #fff;
+    }
+
+    svg {
+      position: absolute;
+      left: 16px;
+      top: 8px;
+    }
+  }
+}

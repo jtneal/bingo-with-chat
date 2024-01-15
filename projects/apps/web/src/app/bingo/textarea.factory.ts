@@ -8,9 +8,7 @@ export class TextareaFactory {
       return TextareaFactory.textarea;
     }
 
-    const current = document.querySelector(
-      '.card textarea'
-    ) as HTMLTextAreaElement;
+    const current = document.querySelector('.card textarea') as HTMLTextAreaElement;
     const textarea = document.createElement('div') as HTMLDivElement;
 
     textarea.style.fontFamily = current.style.fontFamily;

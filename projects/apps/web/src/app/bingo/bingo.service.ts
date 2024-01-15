@@ -1,10 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import {
-  CardDto,
-  CreateGameResponseDto,
-  GameDto,
-} from '@bingo-with-chat/common';
+import { CardDto, CreateGameResponseDto, GameDto } from '@bwc/common';
 import { Observable } from 'rxjs';
 
 @Injectable({
