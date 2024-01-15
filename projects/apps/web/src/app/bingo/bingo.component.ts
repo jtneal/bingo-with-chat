@@ -6,6 +6,7 @@ import { Subject, debounceTime, finalize, firstValueFrom, fromEvent, takeUntil }
 import { AlignmentHandler } from './alignment.handler';
 import { BingoService } from './bingo.service';
 import { Router } from '@angular/router';
+import { ButtonComponent } from '@bwc/components';
 
 /**
  * Button to save
@@ -25,20 +26,16 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'bingo-with-chat-bingo',
   standalone: true,
-  imports: [CommonModule],
+  imports: [ButtonComponent, CommonModule],
   templateUrl: './bingo.component.html',
   styleUrl: './bingo.component.scss',
 })
 export class BingoComponent implements OnDestroy {
-  @ViewChild('cardElement')
-  private readonly cardElement!: ElementRef;
-
-  @ViewChildren('textareaElement')
-  private readonly textareaElements!: ElementRef[];
-
-  private readonly destroy$ = new Subject<void>();
+  @ViewChild('cardElement') private readonly cardElement!: ElementRef;
+  @ViewChildren('textareaElement') private readonly textareaElements!: ElementRef[];
 
   public game$ = this.service.getGame('id').pipe(finalize(() => setTimeout(() => this.setup())));
+  private readonly destroy$ = new Subject<void>();
 
   public constructor(private readonly router: Router, private readonly service: BingoService) {}
 
@@ -58,9 +55,7 @@ export class BingoComponent implements OnDestroy {
   }
 
   private setup(): void {
-    this.textareaElements.forEach((textarea) => {
-      AlignmentHandler.align(textarea.nativeElement);
-    });
+    this.textareaElements.forEach((textarea) => AlignmentHandler.align(textarea.nativeElement));
 
     fromEvent(this.cardElement.nativeElement, 'keyup')
       .pipe(debounceTime(100), takeUntil(this.destroy$))
