@@ -1,14 +1,14 @@
-import { Component, ElementRef, Inject, OnDestroy, ViewChild, ViewChildren } from '@angular/core';
-import { CommonModule, DOCUMENT } from '@angular/common';
+import { Component, ElementRef, OnDestroy, ViewChild, ViewChildren } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CardDto, GameDto } from '@bwc/common';
-import { Subject, debounceTime, finalize, firstValueFrom, fromEvent, takeUntil } from 'rxjs';
+import { AlertComponent, ButtonComponent } from '@bwc/components';
+import { Subject, debounceTime, finalize, firstValueFrom, fromEvent, switchMap, takeUntil } from 'rxjs';
 
+import { AuthState } from '../auth/auth.state';
+import { AppService } from '../app.service';
 import { AlignmentHandler } from './alignment.handler';
 import { BingoService } from './bingo.service';
-import { Router } from '@angular/router';
-import { AlertComponent, ButtonComponent } from '@bwc/components';
-import { AppService } from '../app.service';
-import { AuthState } from '../auth/auth.state';
 
 /**
  * Button to save
@@ -45,17 +45,23 @@ export class BingoComponent implements OnDestroy {
   @ViewChild('cardElement') private readonly cardElement!: ElementRef;
   @ViewChildren('textareaElement') private readonly textareaElements!: ElementRef[];
 
-  public game$ = this.service.getGame('id').pipe(finalize(() => setTimeout(() => this.setup())));
+  private readonly destroy$ = new Subject<void>();
+
+  public game$ = this.route.params.pipe(
+    takeUntil(this.destroy$),
+    switchMap((params) => this.service.getGame(params['author'], params['id'])),
+    finalize(() => setTimeout(() => this.setup()))
+  );
+
   public showError = false;
   public showSuccess = false;
   public theme$ = this.app.themeChangedEvent$;
   public saveInProgress = false;
-  private readonly destroy$ = new Subject<void>();
 
   public constructor(
     private readonly app: AppService,
     private readonly auth: AuthState,
-    @Inject(DOCUMENT) private readonly document: Document,
+    private readonly route: ActivatedRoute,
     private readonly router: Router,
     private readonly service: BingoService
   ) {}

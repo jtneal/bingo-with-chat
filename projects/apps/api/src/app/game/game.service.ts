@@ -1,7 +1,13 @@
-import { CreateTableCommand, DynamoDBClient, PutItemCommand, QueryCommand } from '@aws-sdk/client-dynamodb';
+import {
+  CreateTableCommand,
+  DynamoDBClient,
+  GetItemCommand,
+  PutItemCommand,
+  QueryCommand,
+} from '@aws-sdk/client-dynamodb';
 import { unmarshall } from '@aws-sdk/util-dynamodb';
 import { CreateGameResponseDto, GameDto } from '@bwc/common';
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { randomUUID } from 'crypto';
 
 @Injectable()
@@ -9,11 +15,11 @@ export class GameService {
   public constructor(private readonly dynamo: DynamoDBClient) {}
 
   public async getGames(userId: string): Promise<GameDto[]> {
-    console.log('userId', userId);
-
     const command = new QueryCommand({
       TableName: process.env.TABLE_NAME,
       KeyConditionExpression: 'author = :author',
+      Limit: 100,
+      ScanIndexForward: false,
       ExpressionAttributeValues: {
         ':author': { S: userId },
       },
@@ -24,51 +30,39 @@ export class GameService {
     return output.Items.map((item) => unmarshall(item)) as GameDto[];
   }
 
-  public getGame(id: string): GameDto {
-    console.log(id);
+  public async getGame(author: string, id: string): Promise<GameDto> {
+    if (id === 'new') {
+      return {
+        author,
+        card: [
+          ['', '', '', '', ''],
+          ['', '', '', '', ''],
+          ['', '', 'FREE!', '', ''],
+          ['', '', '', '', ''],
+          ['', '', '', '', ''],
+        ],
+        id,
+        title: 'Untitled',
+      };
+    }
 
-    return {
-      id: 'id',
-      author: 'author',
-      title: 'Title',
-      card: [
-        [
-          'F Bomb Dropped',
-          'Show starts late',
-          'BG3 wins an award',
-          'Destiny wins an award',
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque commodo ac tortor quis ullamcorper. Sed ultricies purus a sapien lacinia, vitae imperdiet turpis malesuada.',
-        ],
-        [
-          'Show ends late',
-          'Technical difficulties',
-          "Crowd boo's",
-          'Wrap up music plays during thank you speech',
-          'Someone trips and falls down',
-        ],
-        [
-          'Unexpected celeb comes on stage',
-          'Someone sneezes on stage',
-          'FREE!',
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque commodo ac tortor quis ullamcorper. Sed ultricies purus a sapien lacinia, vitae imperdiet turpis malesuada.',
-          'Half Life 3 announced',
-        ],
-        [
-          'Destiny 3 announced',
-          'Super Cringe',
-          'Someone talks with gum in their mouth',
-          'Someone wearing pajamas',
-          'Pedro Eustache is shown jamming out on an instrument',
-        ],
-        [
-          'Thank you speech is cut off after being far too long',
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque commodo ac tortor quis ullamcorper. Sed ultricies purus a sapien lacinia, vitae imperdiet turpis malesuada.',
-          'Aliens or UFOs are mentioned',
-          'War/genocide is mentioned',
-          'Layoffs are mentioned',
-        ],
-      ],
-    };
+    const command = new QueryCommand({
+      TableName: process.env.TABLE_NAME,
+      KeyConditionExpression: 'author = :author',
+      Limit: 100,
+      ScanIndexForward: false,
+      ExpressionAttributeValues: {
+        ':author': { S: author },
+      },
+    });
+
+    const output = await this.dynamo.send(command);
+
+    if (!output.Items.length) {
+      throw new NotFoundException();
+    }
+
+    return output.Items.map((item) => unmarshall(item)).find((game) => game.id === id) as GameDto;
   }
 
   // This is only used for local setup
@@ -110,7 +104,7 @@ export class GameService {
         id: { S: id },
         author: { S: author },
         title: { S: 'Untitled' },
-        card: { S: JSON.stringify(game.card) },
+        card: { L: game.card.map((row) => ({ L: row.map((cell) => ({ S: cell })) })) },
         createdAt: { S: now },
         updatedAt: { S: now },
       },

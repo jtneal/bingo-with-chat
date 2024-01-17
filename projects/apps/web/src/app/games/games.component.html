@@ -1,8 +1,5 @@
 <ul *ngIf="games$ | async; let games">
   <li *ngFor="let game of games">
-    <a [routerLink]="[game.id]">
-      {{ game.title }}
-    </a>
-    ({{ game.id }})
+    <a [routerLink]="[game.id]">{{ game.title }}</a> ({{ game.id }})
   </li>
 </ul>

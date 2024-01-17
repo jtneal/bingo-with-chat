@@ -1,8 +1,8 @@
 import { CreateGameResponseDto, GameDto } from '@bwc/common';
 import { Body, Controller, Get, Param, Post, Request, UseGuards } from '@nestjs/common';
 
-import { GameService } from './game.service';
 import { AuthGuard } from '../auth/auth.guard';
+import { GameService } from './game.service';
 
 @Controller('games')
 export class GameController {
@@ -11,14 +11,13 @@ export class GameController {
   @Get()
   @UseGuards(AuthGuard)
   getGames(@Request() req): Promise<GameDto[]> {
-    console.log('req.user.sub', typeof req.user.sub, req.user.sub);
-
     return this.service.getGames(req.user.sub);
   }
 
-  @Get(':id')
-  getGame(@Param('id') id: string): GameDto {
-    return this.service.getGame(id);
+  @Get(':author/:id')
+  @UseGuards(AuthGuard)
+  getGame(@Param('author') author: string, @Param('id') id: string): Promise<GameDto> {
+    return this.service.getGame(author, id);
   }
 
   // This is only used for local setup

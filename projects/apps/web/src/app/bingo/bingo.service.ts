@@ -10,8 +10,10 @@ import { AuthState } from '../auth/auth.state';
 export class BingoService {
   public constructor(private readonly auth: AuthState, private readonly http: HttpClient) {}
 
-  public getGame(id: string): Observable<GameDto> {
-    return this.http.get<GameDto>(`/api/games/${id}`);
+  public getGame(author: string, id: string): Observable<GameDto> {
+    return this.http.get<GameDto>(`/api/games/${author}/${id}`, {
+      headers: { Authorization: `Bearer ${this.auth.idToken}` },
+    });
   }
 
   public createGame(game: GameDto): Observable<CreateGameResponseDto> {
