@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { CreateGameResponseDto, GameDto } from '@bwc/common';
+import { SaveGameResponseDto, GameDto } from '@bwc/common';
 import { Observable } from 'rxjs';
 import { AuthState } from '../auth/auth.state';
 
@@ -16,8 +16,8 @@ export class BingoService {
     });
   }
 
-  public createGame(game: GameDto): Observable<CreateGameResponseDto> {
-    return this.http.post<CreateGameResponseDto>('/api/games', game, {
+  public saveGame(game: GameDto): Observable<SaveGameResponseDto> {
+    return this.http.post<SaveGameResponseDto>('/api/games', game, {
       headers: { Authorization: `Bearer ${this.auth.idToken}` },
     });
   }

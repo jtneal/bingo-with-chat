@@ -1,4 +1,4 @@
-import { CreateGameResponseDto, GameDto } from '@bwc/common';
+import { SaveGameResponseDto, GameDto } from '@bwc/common';
 import { Body, Controller, Get, Param, Post, Request, UseGuards } from '@nestjs/common';
 
 import { AuthGuard } from '../auth/auth.guard';
@@ -28,7 +28,7 @@ export class GameController {
 
   @Post()
   @UseGuards(AuthGuard)
-  createGame(@Request() req, @Body() game: GameDto): Promise<CreateGameResponseDto> {
-    return this.service.createGame(game, req.user.sub);
+  saveGame(@Request() req, @Body() game: GameDto): Promise<SaveGameResponseDto> {
+    return this.service.saveGame(game, req.user.sub);
   }
 }

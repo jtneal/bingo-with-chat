@@ -2,9 +2,7 @@
   <bwc-alert *ngIf="showError" [theme]="theme" type="error">
     There was an error saving your game, please try again.
   </bwc-alert>
-  <bwc-alert *ngIf="showSuccess" [theme]="theme" type="success">
-    Game was successfully saved.
-  </bwc-alert>
+  <bwc-alert *ngIf="showSuccess" [theme]="theme" type="success"> Game was successfully saved. </bwc-alert>
 </ng-container>
 
 <ng-container *ngIf="game$ | async; let game">

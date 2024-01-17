@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CardDto, GameDto } from '@bwc/common';
 import { AlertComponent, ButtonComponent } from '@bwc/components';
-import { Subject, debounceTime, finalize, firstValueFrom, fromEvent, switchMap, takeUntil } from 'rxjs';
+import { Subject, debounceTime, finalize, firstValueFrom, fromEvent, switchMap, takeUntil, tap } from 'rxjs';
 
 import { AuthState } from '../auth/auth.state';
 import { AppService } from '../app.service';
@@ -46,9 +46,13 @@ export class BingoComponent implements OnDestroy {
   @ViewChildren('textareaElement') private readonly textareaElements!: ElementRef[];
 
   private readonly destroy$ = new Subject<void>();
+  private gameId = '';
 
   public game$ = this.route.params.pipe(
     takeUntil(this.destroy$),
+    tap((params) => {
+      this.gameId = params['id'];
+    }),
     switchMap((params) => this.service.getGame(params['author'], params['id'])),
     finalize(() => setTimeout(() => this.setup()))
   );
@@ -79,12 +83,14 @@ export class BingoComponent implements OnDestroy {
     try {
       const game = {
         card,
-        id: 'new',
+        id: this.gameId,
         author: this.auth.token.sub,
         title: 'Untitled',
       } as GameDto;
 
-      const apiGame = await firstValueFrom(this.service.createGame(game));
+      console.log('game', game);
+
+      const apiGame = await firstValueFrom(this.service.saveGame(game));
 
       if (!apiGame.success) {
         throw new Error(apiGame.error);

@@ -1,12 +1,6 @@
-import {
-  CreateTableCommand,
-  DynamoDBClient,
-  GetItemCommand,
-  PutItemCommand,
-  QueryCommand,
-} from '@aws-sdk/client-dynamodb';
+import { CreateTableCommand, DynamoDBClient, PutItemCommand, QueryCommand } from '@aws-sdk/client-dynamodb';
 import { unmarshall } from '@aws-sdk/util-dynamodb';
-import { CreateGameResponseDto, GameDto } from '@bwc/common';
+import { SaveGameResponseDto, GameDto } from '@bwc/common';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { randomUUID } from 'crypto';
 
@@ -94,7 +88,7 @@ export class GameService {
     return { success: true };
   }
 
-  public async createGame(game: GameDto, author: string): Promise<CreateGameResponseDto> {
+  public async saveGame(game: GameDto, author: string): Promise<SaveGameResponseDto> {
     const now = new Date().toISOString();
     const id = randomUUID();
 

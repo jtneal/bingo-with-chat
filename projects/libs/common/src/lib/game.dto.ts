@@ -7,6 +7,6 @@ export interface GameDto {
   title: string;
 }
 
-export type CreateGameErrorDto = { error: string; success: false };
-export type CreateGameSuccessDto = { id: string; author: string; success: true };
-export type CreateGameResponseDto = CreateGameErrorDto | CreateGameSuccessDto;
+export type SaveGameErrorDto = { error: string; success: false };
+export type SaveGameSuccessDto = { id: string; author: string; success: true };
+export type SaveGameResponseDto = SaveGameErrorDto | SaveGameSuccessDto;
