@@ -1,6 +1,6 @@
-import { Component, ElementRef, OnDestroy, ViewChild, ViewChildren } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { CardDto } from '@bwc/common';
+import { Component, ElementRef, Inject, OnDestroy, ViewChild, ViewChildren } from '@angular/core';
+import { CommonModule, DOCUMENT } from '@angular/common';
+import { CardDto, GameDto } from '@bwc/common';
 import { Subject, debounceTime, finalize, firstValueFrom, fromEvent, takeUntil } from 'rxjs';
 
 import { AlignmentHandler } from './alignment.handler';
@@ -8,6 +8,7 @@ import { BingoService } from './bingo.service';
 import { Router } from '@angular/router';
 import { AlertComponent, ButtonComponent } from '@bwc/components';
 import { AppService } from '../app.service';
+import { AuthState } from '../auth/auth.state';
 
 /**
  * Button to save
@@ -22,6 +23,13 @@ import { AppService } from '../app.service';
  * Add google analytics or something so i know where visitors might be coming from
  * Update uses same stuff but says Update
  * Need to setup getGame call to be dynamic based on param, but if new use blank
+ * It's not meant for people to just login and look for existing bingo games.
+ * Therefore, there's no reason for the screenshots
+ * So, login with an active game, assumes you want to look at YOUR existing games
+ * If you do not have existing games, it will take you to the new page immediately
+ * Until you have at least one saved game, you will not see the games page
+ * Need to add deeplink from login to auth component
+ * Statistics on the home page about # of games, # of players, etc.
  */
 
 @Component({
@@ -44,6 +52,8 @@ export class BingoComponent implements OnDestroy {
 
   public constructor(
     private readonly app: AppService,
+    private readonly auth: AuthState,
+    @Inject(DOCUMENT) private readonly document: Document,
     private readonly router: Router,
     private readonly service: BingoService
   ) {}
@@ -59,13 +69,20 @@ export class BingoComponent implements OnDestroy {
     this.showSuccess = false;
 
     try {
-      const apiCard = await firstValueFrom(this.service.createGame(card));
+      const game = {
+        card,
+        id: 'new',
+        author: this.auth.token.sub,
+        title: 'Untitled',
+      } as GameDto;
 
-      if (!apiCard.success) {
-        throw new Error(apiCard.error);
+      const apiGame = await firstValueFrom(this.service.createGame(game));
+
+      if (!apiGame.success) {
+        throw new Error(apiGame.error);
       }
 
-      this.router.navigate(['games', apiCard.id]);
+      this.router.navigate(['games', apiGame.id]);
       this.saveInProgress = false;
       this.showSuccess = true;
     } catch (error) {

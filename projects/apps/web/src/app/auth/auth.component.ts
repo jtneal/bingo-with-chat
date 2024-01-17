@@ -32,7 +32,9 @@ export class AuthComponent implements OnInit {
   public async ngOnInit(): Promise<void> {
     // If we are already authenticated, redirect to the new game page
     if (await this.isAuthenticated()) {
-      this.router.navigate(['games/new']);
+      console.log('isAuthenticated1');
+      this.router.navigate(['games']);
+      console.log('isAuthenticated2');
 
       return;
     }

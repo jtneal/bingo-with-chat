@@ -1,4 +1,4 @@
-import { DynamoDBClient, PutItemCommand } from '@aws-sdk/client-dynamodb';
+import { CreateTableCommand, DynamoDBClient, PutItemCommand, QueryCommand } from '@aws-sdk/client-dynamodb';
 import { CardDto, CreateGameResponseDto, GameDto } from '@bwc/common';
 import { Injectable } from '@nestjs/common';
 import { randomUUID } from 'crypto';
@@ -7,12 +7,31 @@ import { randomUUID } from 'crypto';
 export class GameService {
   public constructor(private readonly dynamo: DynamoDBClient) {}
 
+  public async getGames(userId: string): Promise<GameDto[]> {
+    console.log('userId', userId);
+
+    const command = new QueryCommand({
+      TableName: process.env.TABLE_NAME,
+      KeyConditionExpression: 'author = :author',
+      ExpressionAttributeValues: {
+        ':author': { S: userId },
+      },
+    });
+
+    const output = await this.dynamo.send(command);
+
+    console.log('output', output);
+
+    return output.Items as unknown as GameDto[];
+  }
+
   public getGame(id: string): GameDto {
     console.log(id);
 
     return {
-      id: '',
-      title: '',
+      id: 'id',
+      author: 'author',
+      title: 'Title',
       card: [
         [
           'F Bomb Dropped',
@@ -54,47 +73,47 @@ export class GameService {
   }
 
   // This is only used for local setup
-  // public async createTable(): Promise<{ success: boolean }> {
-  //   const command = new CreateTableCommand({
-  //     TableName: process.env.TABLE_NAME,
-  //     AttributeDefinitions: [
-  //       { AttributeName: 'owner', AttributeType: 'S' },
-  //       { AttributeName: 'updatedAt', AttributeType: 'S' },
-  //     ],
-  //     KeySchema: [
-  //       { AttributeName: 'owner', KeyType: 'HASH' },
-  //       { AttributeName: 'updatedAt', KeyType: 'RANGE' },
-  //     ],
-  //     ProvisionedThroughput: {
-  //       ReadCapacityUnits: 5,
-  //       WriteCapacityUnits: 5,
-  //     },
-  //   });
+  public async createTable(): Promise<{ success: boolean }> {
+    const command = new CreateTableCommand({
+      TableName: process.env.TABLE_NAME,
+      AttributeDefinitions: [
+        { AttributeName: 'author', AttributeType: 'S' },
+        { AttributeName: 'updatedAt', AttributeType: 'S' },
+      ],
+      KeySchema: [
+        { AttributeName: 'author', KeyType: 'HASH' },
+        { AttributeName: 'updatedAt', KeyType: 'RANGE' },
+      ],
+      ProvisionedThroughput: {
+        ReadCapacityUnits: 5,
+        WriteCapacityUnits: 5,
+      },
+    });
 
-  //   try {
-  //     await this.dynamo.send(command);
-  //   } catch (error) {
-  //     console.error(error);
+    try {
+      await this.dynamo.send(command);
+    } catch (error) {
+      console.error(error);
 
-  //     return { success: false };
-  //   }
+      return { success: false };
+    }
 
-  //   return { success: true };
-  // }
+    return { success: true };
+  }
 
-  public async createGame(card: CardDto): Promise<CreateGameResponseDto> {
+  public async createGame(card: CardDto, author: string): Promise<CreateGameResponseDto> {
+    const now = new Date().toISOString();
     const id = randomUUID();
-    const owner = 'randomTwitchId';
 
     const command = new PutItemCommand({
       TableName: process.env.TABLE_NAME,
       Item: {
         id: { S: id },
-        owner: { S: owner },
+        author: { S: author },
         title: { S: 'Untitled' },
         card: { S: JSON.stringify(card) },
-        createdAt: { S: new Date().toISOString() },
-        updatedAt: { S: new Date().toISOString() },
+        createdAt: { S: now },
+        updatedAt: { S: now },
       },
     });
 
@@ -106,6 +125,6 @@ export class GameService {
       return { error: 'Failed to create game', success: false };
     }
 
-    return { id, owner, success: true };
+    return { id, author: author, success: true };
   }
 }

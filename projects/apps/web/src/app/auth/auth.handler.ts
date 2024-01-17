@@ -36,7 +36,8 @@ export class AuthHandler {
 
     // If we get here, we have a valid callback
     this.state.accessToken = accessToken;
-    this.state.idToken = jose.decodeJwt(idToken);
+    this.state.idToken = idToken;
+    this.state.token = jose.decodeJwt(idToken);
 
     // Persist the tokens to local storage
     localStorage.setItem('bwc-access-token', accessToken);
@@ -66,7 +67,8 @@ export class AuthHandler {
 
     // If we get here, we have valid tokens
     this.state.accessToken = accessToken;
-    this.state.idToken = jose.decodeJwt(idToken);
+    this.state.idToken = idToken;
+    this.state.token = jose.decodeJwt(idToken);
 
     return true;
   }
