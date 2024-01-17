@@ -30,6 +30,8 @@ import { AuthState } from '../auth/auth.state';
  * Until you have at least one saved game, you will not see the games page
  * Need to add deeplink from login to auth component
  * Statistics on the home page about # of games, # of players, etc.
+ * Might need to stop using id-token as part of auth process
+ * I think the id token expires pretty quickly and causing logout
  */
 
 @Component({
@@ -82,7 +84,7 @@ export class BingoComponent implements OnDestroy {
         throw new Error(apiGame.error);
       }
 
-      this.router.navigate(['games', apiGame.id]);
+      this.router.navigate(['games', apiGame.author, apiGame.id]);
       this.saveInProgress = false;
       this.showSuccess = true;
     } catch (error) {

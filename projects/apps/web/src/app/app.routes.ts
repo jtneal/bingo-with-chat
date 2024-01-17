@@ -7,6 +7,6 @@ import { GamesComponent } from './games/games.component';
 
 export const appRoutes: Route[] = [
   { component: AuthComponent, path: '', pathMatch: 'full' },
-  { canActivate: [isAuthenticated], component: GamesComponent, path: 'games' },
-  { canActivate: [isAuthenticated], component: BingoComponent, path: 'games/:id' },
+  { canActivate: [isAuthenticated], component: GamesComponent, path: 'games/:author' },
+  { canActivate: [isAuthenticated], component: BingoComponent, path: 'games/:author/:id' },
 ];
