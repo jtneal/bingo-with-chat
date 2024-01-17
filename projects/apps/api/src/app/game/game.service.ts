@@ -1,5 +1,6 @@
 import { CreateTableCommand, DynamoDBClient, PutItemCommand, QueryCommand } from '@aws-sdk/client-dynamodb';
-import { CardDto, CreateGameResponseDto, GameDto } from '@bwc/common';
+import { unmarshall } from '@aws-sdk/util-dynamodb';
+import { CreateGameResponseDto, GameDto } from '@bwc/common';
 import { Injectable } from '@nestjs/common';
 import { randomUUID } from 'crypto';
 
@@ -20,9 +21,7 @@ export class GameService {
 
     const output = await this.dynamo.send(command);
 
-    console.log('output', output);
-
-    return output.Items as unknown as GameDto[];
+    return output.Items.map((item) => unmarshall(item)) as GameDto[];
   }
 
   public getGame(id: string): GameDto {
@@ -101,7 +100,7 @@ export class GameService {
     return { success: true };
   }
 
-  public async createGame(card: CardDto, author: string): Promise<CreateGameResponseDto> {
+  public async createGame(game: GameDto, author: string): Promise<CreateGameResponseDto> {
     const now = new Date().toISOString();
     const id = randomUUID();
 
@@ -111,7 +110,7 @@ export class GameService {
         id: { S: id },
         author: { S: author },
         title: { S: 'Untitled' },
-        card: { S: JSON.stringify(card) },
+        card: { S: JSON.stringify(game.card) },
         createdAt: { S: now },
         updatedAt: { S: now },
       },

@@ -1,4 +1,4 @@
-import { CardDto, CreateGameResponseDto, GameDto } from '@bwc/common';
+import { CreateGameResponseDto, GameDto } from '@bwc/common';
 import { Body, Controller, Get, Param, Post, Request, UseGuards } from '@nestjs/common';
 
 import { GameService } from './game.service';
@@ -28,7 +28,8 @@ export class GameController {
   }
 
   @Post()
-  createGame(@Request() req, @Body() card: CardDto): Promise<CreateGameResponseDto> {
-    return this.service.createGame(card, req.user.sub);
+  @UseGuards(AuthGuard)
+  createGame(@Request() req, @Body() game: GameDto): Promise<CreateGameResponseDto> {
+    return this.service.createGame(game, req.user.sub);
   }
 }
