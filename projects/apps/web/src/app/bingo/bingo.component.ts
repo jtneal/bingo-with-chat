@@ -1,5 +1,6 @@
 import { Component, ElementRef, OnDestroy, ViewChild, ViewChildren } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormArray, FormBuilder, FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CardDto, GameDto } from '@bwc/common';
 import { AlertComponent, ButtonComponent } from '@bwc/components';
@@ -37,7 +38,7 @@ import { BingoService } from './bingo.service';
 @Component({
   selector: 'bingo-with-chat-bingo',
   standalone: true,
-  imports: [AlertComponent, ButtonComponent, CommonModule],
+  imports: [AlertComponent, ButtonComponent, CommonModule, ReactiveFormsModule],
   templateUrl: './bingo.component.html',
   styleUrl: './bingo.component.scss',
 })
@@ -48,13 +49,21 @@ export class BingoComponent implements OnDestroy {
   private readonly destroy$ = new Subject<void>();
   private gameId = '';
 
+  public card = [] as FormControl<string | null>[][];
+
+  public form = this.formBuilder.group({
+    title: ['', Validators.required],
+    card: this.formBuilder.array([this.formBuilder.array([this.formBuilder.control('')])]),
+  });
+
   public game$ = this.route.params.pipe(
     takeUntil(this.destroy$),
-    tap((params) => {
-      this.gameId = params['id'];
-    }),
+    tap((params) => (this.gameId = params['id'])),
     switchMap((params) =>
-      this.service.getGame(params['author'], params['id']).pipe(finalize(() => setTimeout(() => this.setup())))
+      this.service.getGame(params['author'], params['id']).pipe(
+        tap((game) => (this.card = game.card.map((row) => row.map((col) => this.formBuilder.control(col))))),
+        finalize(() => setTimeout(() => this.setup()))
+      )
     )
   );
 
@@ -66,6 +75,7 @@ export class BingoComponent implements OnDestroy {
   public constructor(
     private readonly app: AppService,
     private readonly auth: AuthState,
+    private readonly formBuilder: FormBuilder,
     private readonly route: ActivatedRoute,
     private readonly router: Router,
     private readonly service: BingoService
@@ -76,14 +86,14 @@ export class BingoComponent implements OnDestroy {
     this.destroy$.complete();
   }
 
-  public async onSubmit(card: CardDto): Promise<void> {
+  public async onSubmit(): Promise<void> {
     this.saveInProgress = true;
     this.showError = false;
     this.showSuccess = false;
 
     try {
       const game = {
-        card,
+        card: this.card.map((row) => row.map((col) => col.value)),
         id: this.gameId,
         author: this.auth.token.sub,
         title: 'Untitled',

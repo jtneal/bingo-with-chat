@@ -7,9 +7,9 @@
 
 <ng-container *ngIf="game$ | async; let game">
   <div #cardElement class="card">
-    <div *ngFor="let row of game.card" class="row">
-      <div *ngFor="let col of row" class="col">
-        <textarea #textareaElement class="textarea">{{ col }}</textarea>
+    <div *ngFor="let row of game.card; let x = index" class="row">
+      <div *ngFor="let col of row; let y = index" class="col">
+        <textarea #textareaElement class="textarea" [formControl]="card[x][y]"></textarea>
       </div>
     </div>
   </div>
@@ -24,7 +24,7 @@
       Add More
     </bwc-button>
     <bwc-button
-      (click)="onSubmit(game.card)"
+      (click)="onSubmit()"
       [disabled]="saveInProgress"
       [icon]="saveInProgress ? 'loading' : undefined"
       type="submit"
