@@ -4,9 +4,11 @@ import { Module } from '@nestjs/common';
 import { GameController } from './game.controller';
 import { GameService } from './game.service';
 import { ConfigService } from '@nestjs/config';
+import { HttpModule } from '@nestjs/axios';
 
 @Module({
   controllers: [GameController],
+  imports: [HttpModule],
   providers: [
     GameService,
     {

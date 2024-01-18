@@ -12,13 +12,19 @@ export class BingoService {
 
   public getGame(author: string, id: string): Observable<GameDto> {
     return this.http.get<GameDto>(`/api/games/${author}/${id}`, {
-      headers: { Authorization: `Bearer ${this.auth.idToken}` },
+      headers: {
+        Authorization: `Bearer ${this.auth.idToken}`,
+        AccessToken: this.auth.accessToken,
+      },
     });
   }
 
   public saveGame(game: GameDto): Observable<SaveGameResponseDto> {
     return this.http.post<SaveGameResponseDto>('/api/games', game, {
-      headers: { Authorization: `Bearer ${this.auth.idToken}` },
+      headers: {
+        Authorization: `Bearer ${this.auth.idToken}`,
+        AccessToken: this.auth.accessToken,
+      },
     });
   }
 }

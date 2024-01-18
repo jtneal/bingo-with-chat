@@ -11,7 +11,10 @@ export class GamesService {
 
   public getGames(): Observable<GameDto[]> {
     return this.http.get<GameDto[]>(`/api/games`, {
-      headers: { Authorization: `Bearer ${this.auth.idToken}` },
+      headers: {
+        Authorization: `Bearer ${this.auth.idToken}`,
+        AccessToken: this.auth.accessToken,
+      },
     });
   }
 }
