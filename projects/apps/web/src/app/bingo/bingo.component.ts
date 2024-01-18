@@ -53,8 +53,9 @@ export class BingoComponent implements OnDestroy {
     tap((params) => {
       this.gameId = params['id'];
     }),
-    switchMap((params) => this.service.getGame(params['author'], params['id'])),
-    finalize(() => setTimeout(() => this.setup()))
+    switchMap((params) =>
+      this.service.getGame(params['author'], params['id']).pipe(finalize(() => setTimeout(() => this.setup())))
+    )
   );
 
   public showError = false;
